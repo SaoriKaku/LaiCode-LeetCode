@@ -1,2 +1,2 @@
-# LaiCode-LeetCode
-all written in Java
+# LeetCode
+to be continued...
