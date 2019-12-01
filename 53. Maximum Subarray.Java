@@ -13,7 +13,7 @@ If you have figured out the O(n) solution, try coding another solution using the
 */
 
 
-// method 1: DP 
+// method 1: DP + array 
 // time complexity: O(n), space complexity: O(n)
 class Solution {
     public int maxSubArray(int[] nums) {
@@ -38,3 +38,32 @@ class Solution {
         return result;
     }
 }
+
+
+// method 2: DP + single variable
+// time complexity: O(n), space complexity: O(1)
+class Solution {
+    public int maxSubArray(int[] nums) {
+        if(nums == null || nums.length == 0) {
+            return 0;
+        }
+        if(nums.length == 1) {
+            return nums[0];
+        }
+        int sum = nums[0];
+        int result = nums[0];
+        for(int i = 1; i < nums.length; i++) {
+            if(sum > 0) {
+                sum += nums[i];
+            }
+            else {
+                sum = nums[i];
+            }
+            result = Math.max(result, sum);
+        }
+        //System.out.println(Arrays.toString(sum));
+        return result;
+    }
+}
+
+
