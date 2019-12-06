@@ -18,7 +18,8 @@ solution.reset();
 solution.shuffle();
 */
 
-// method 1: time complexity: O(n), space complexity: O(1)
+// method 1: shuffling
+// time complexity: O(n), space complexity: O(1)
 class Solution {
     
     private int[] array;
@@ -37,7 +38,11 @@ class Solution {
     /** Returns a random shuffling of the array. */
     public int[] shuffle() {
         int[] result = Arrays.copyOf(array, array.length);
+        // 每次洗牌，洗出随机一张，换到所有还未洗牌的最后一张
+        // 每次选择一张牌，洗好的牌就多了一张，未洗的牌就少了一张
         for(int i = result.length - 1; i >= 0; i--) {
+            // [0, i]是需要洗牌的index
+            // nextInt(i + 1)，洗出的牌是[0, i+1)
             int j = random.nextInt(i + 1);
             swap(result, j, i);
         }
