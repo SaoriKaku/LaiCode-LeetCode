@@ -78,3 +78,62 @@ class Solution {
         return s.substring(start, start + maxLength + 1);
     }
 }
+
+
+// method 3: DP
+// time complexity: O(n^2), space complexity: O(n^2)
+class Solution {
+    public String longestPalindrome(String s) {
+        if(s == null || s.length() == 0) {
+            return "";
+        }
+        /*
+            b a b a d
+            0 1 2 3 4
+        b 0 T F T F F
+        a 1   T F T F
+        b 2     T F F
+        a 3       T F
+        d 4         T
+        dp[i, j] = true, if dp[i + 1, j - 1] == true and char[i-1] == char[j+1];
+        */
+        int n = s.length();
+        boolean[][] dp = new boolean[n][n];
+        int start = 0;
+        int end = 0;
+        // i = distance, j = start index, i + j = end index
+        for(int i = 0; i < n; i++) {
+            for(int j = 0; i + j < n; j++) {
+                if(i == 0) {
+                    dp[j][i + j] = true;
+                }
+                else if(s.charAt(j) == s.charAt(i + j)) {
+                    if(i == 1) {
+                        dp[j][i + j] = true;
+                    }
+                    else {
+                        dp[j][i + j] = dp[j + 1][i + j - 1];
+                    }
+                }
+                else {
+                    dp[j][i + j] = false;
+                }
+                // update result
+                if(dp[j][i + j] && i > end - start) {
+                    start = j;
+                    end = i + j;
+                }
+            }
+        }
+        // for(int i = 0; i < n; i++) {
+        //     for(int j = 0; j < n; j++) {
+        //         System.out.print(dp[i][j] + " ");
+        //     }
+        //     System.out.println();
+        // }
+        return s.substring(start, end + 1);
+    }
+}
+
+
+
