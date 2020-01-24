@@ -21,82 +21,69 @@ Note:
 n is a 32-bit signed integer, within the range [−231, 231 − 1]
 */
 
-// time complexity: O(n) time out
-// space complexity: O(1)
+
+// method 1: time complexity: O(logn), space complexity: O(logn)
 class Solution {
+    /*
+    -100.0 < x < 100.0
+    n is a 32-bit signed integer, within the range [−231, 231 − 1]  
+    */
     public double myPow(double x, int n) {
-        // brute force
-        if(n < 0) {
-            x = 1 / x;
-            n *= -1;
+        if(n == 0) {
+            return 1.0;
         }
-        //System.out.println("x = " + x);
-        double result = 1;
-        for(int i = 0; i < n; i++) {
-            result *= x;
-            //System.out.println("result = " + result);
+        if(x == 0.0) {
+            return 0.0;
+        }
+        double result = myPowHelper(x, n);
+        if(n < 0) {
+            return 1 / result;
         }
         return result;
     }
-}
-
-// method: recursion
-// time complexity: O(logn)
-// space complexity: O(logn)
-class Solution {
-    public double fastPow(double x, int n) {     
+    public double myPowHelper(double x, int n) {
         if(n == 0) {
             return 1.0;
         }
-        double harfX = fastPow(x, n / 2);
+        double half_result = myPowHelper(x, n/2);
         if(n % 2 == 0) {
-            return harfX * harfX;
+            return half_result * half_result;
         }
         else {
-            return harfX * harfX * x;
+            return half_result * half_result * x;
         }
-    }
-    public double myPow(double x, int n) {
-        if(n < 0) {
-            x = 1 / x;
-            n *= -1;
-        }
-        if(n == Integer.MIN_VALUE) {
-            n = n / 2;
-            x *= x;
-        }
-        return fastPow(x, n);
     }
 }
 
 
-// method: bottom up
-// time complexity: O(logn)
-// space complexity: O(1)
+// method 2: time complexity: O(logn), space complexity: O(1)
 class Solution {
+    /*
+    -100.0 < x < 100.0
+    n is a 32-bit signed integer, within the range [−231, 231 − 1]  
+    */
     public double myPow(double x, int n) {
         if(n == 0) {
             return 1.0;
         }
+        if(x == 0.0) {
+            return 0.0;
+        }
         long N = n;
-        if(N < 0) {
-            N *= -1;
+        if(n < 0) {
+            N = N * -1;
             x = 1 / x;
         }
         double result = 1;
         double curr = x;
-        for(long i = N; i > 0; i = i / 2) {
-            if((i % 2) == 1) {
+        for(long i = N; i > 0; i /= 2) {
+            if(i % 2 == 1) {
                 result = result * curr;
             }
             curr = curr * curr;
+            //System.out.println("i = " + i + ", result = " + result + ", curr = " + curr);
         }
         return result;
     }
-    
 }
-
-
-
-
 
