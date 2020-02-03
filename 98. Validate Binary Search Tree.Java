@@ -30,6 +30,8 @@ Explanation: The root node's value is 5 but its right child's value is 4.
 */
 
 
+// method 1: recursive
+// time complexity: O(n), space complexity: O(height of tree)
 /**
  * Definition for a binary tree node.
  * public class TreeNode {
@@ -57,3 +59,41 @@ class Solution {
     }
 }
 
+
+// method 2: iterative
+// time complexity: O(n), space complexity: O(n)
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public boolean isValidBST(TreeNode root) {
+        if(root == null) {
+            return true;
+        }
+        Deque<TreeNode> stack = new ArrayDeque<>();
+        TreeNode nextNode = root;
+        Integer prevNodeVal = null;
+        while(nextNode != null || !stack.isEmpty()) {
+            if(nextNode != null) {
+                stack.push(nextNode);
+                nextNode = nextNode.left;
+            }
+            else {
+                nextNode = stack.pop();
+                if(prevNodeVal != null && nextNode.val <= prevNodeVal) {
+                    return false;
+                }
+                //System.out.println("popNode = " + nextNode.val);
+                prevNodeVal = nextNode.val;
+                nextNode = nextNode.right;
+            }
+        }
+        return true;
+    }
+}
