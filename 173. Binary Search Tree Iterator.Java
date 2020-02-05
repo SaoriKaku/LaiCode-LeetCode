@@ -23,6 +23,7 @@ You may assume that next() call will always be valid, that is, there will be at 
 
 
 // method 1: in-order traverse, turn a tree to be stored in a sorted list
+// time complexity: next(): O(1), hasNext(): O(1); space compelxity: O(n)
 /**
  * Definition for a binary tree node.
  * public class TreeNode {
@@ -71,4 +72,53 @@ class BSTIterator {
  * boolean param_2 = obj.hasNext();
  */
 
+
+// method 2: a stack to store the all left nodes
+// time complexity: next(): O(1), hasNext(): O(1); space compelxity: O(height)
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class BSTIterator {
+    private Deque<TreeNode> stack;
+
+    public BSTIterator(TreeNode root) {
+        stack = new ArrayDeque<>();
+        pushAllLeftNodes(root);
+        //System.out.println(stack);
+    }
+    
+    public void pushAllLeftNodes(TreeNode curr) {
+        while(curr != null) {
+            stack.push(curr);
+            curr = curr.left;
+        }
+    }
+    
+    /** @return the next smallest number */
+    public int next() {
+        TreeNode curr = stack.pop();
+        if(curr.right != null) {
+            pushAllLeftNodes(curr.right);
+        }
+        return curr.val;
+    }
+    
+    /** @return whether we have a next smallest number */
+    public boolean hasNext() {
+        return !stack.isEmpty();
+    }
+}
+
+/**
+ * Your BSTIterator object will be instantiated and called as such:
+ * BSTIterator obj = new BSTIterator(root);
+ * int param_1 = obj.next();
+ * boolean param_2 = obj.hasNext();
+ */
 
