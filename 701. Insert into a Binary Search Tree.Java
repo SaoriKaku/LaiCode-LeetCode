@@ -82,12 +82,6 @@ class Solution {
 class Solution {
     public TreeNode insertIntoBST(TreeNode root, int val) {
         if(root == null) {
-            return root;
-        }
-        return insertIntoBSTHelper(root, val);
-    }
-    public TreeNode insertIntoBSTHelper(TreeNode root, int val) {
-        if(root == null) {
             return new TreeNode(val);
         }
         if(val < root.val) {
