@@ -19,6 +19,7 @@ return true, as there exist a root-to-leaf path 5->4->11->2 which sum is 22.
 */
 
 
+// method 1: recursion inorder
 /**
  * Definition for a binary tree node.
  * public class TreeNode {
@@ -40,3 +41,39 @@ class Solution {
         return hasPathSum(root.left, sum) || hasPathSum(root.right, sum);
     }
 }
+
+
+// method 2: iteration preorder
+class Solution {
+    public boolean hasPathSum(TreeNode root, int sum) {
+        if(root == null) {
+            return false;
+        }
+        Deque<TreeNode> stack = new ArrayDeque<>();
+        Deque<Integer> sums = new ArrayDeque<>();
+        stack.push(root);
+        sums.push(sum);
+        while(!stack.isEmpty()) {
+            TreeNode currNode = stack.pop();
+            int currSum = sums.pop();
+            currSum -= currNode.val;
+            if(currNode.left == null && currNode.right == null && currSum == 0) {
+                return true;
+            }
+            if(currNode.left != null) {
+                stack.push(currNode.left);
+                sums.push(currSum);
+            }
+            if(currNode.right != null) {
+                stack.push(currNode.right);
+                sums.push(currSum);
+            }
+        }
+        return false;
+    }
+}
+
+
+
+
+
