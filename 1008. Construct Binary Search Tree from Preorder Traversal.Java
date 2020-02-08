@@ -4,22 +4,17 @@ Return the root node of a binary search tree that matches the given preorder tra
 
 (Recall that a binary search tree is a binary tree where for every node, any descendant of node.left has a value < node.val, and any descendant of node.right has a value > node.val.  Also recall that a preorder traversal displays the value of the node first, then traverses node.left, then traverses node.right.)
 
- 
-
 Example 1:
-
 Input: [8,5,1,7,10,12]
 Output: [8,5,10,1,7,null,12]
 
- 
-
 Note: 
-
 1 <= preorder.length <= 100
 The values of preorder are distinct.
 */
 
 
+// method 1: recursion
 /**
  * Definition for a binary tree node.
  * public class TreeNode {
@@ -72,3 +67,48 @@ class Solution {
         return bound;
     }
 }
+
+
+// method 2: iteration
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public TreeNode bstFromPreorder(int[] preorder) {
+        if(preorder == null || preorder.length == 0) {
+            return null;
+        }
+        //Input: [8,5,1,7,10,12]
+        Deque<TreeNode> stack = new ArrayDeque<>();
+        int i = 0;
+        TreeNode root = new TreeNode(preorder[i]);
+        i++;
+        stack.push(root);
+        while(i < preorder.length) {
+            TreeNode currNode = stack.peek();
+            TreeNode newNode = new TreeNode(preorder[i]);
+            if(preorder[i] < currNode.val) {
+                currNode.left = newNode;
+            }
+            else {
+                while(!stack.isEmpty() && stack.peek().val < preorder[i]) {
+                    currNode = stack.pop();
+                }
+                currNode.right = newNode;
+            }
+            i++;
+            stack.push(newNode);
+        }
+        return root;
+    }
+}
+
+
+
+
