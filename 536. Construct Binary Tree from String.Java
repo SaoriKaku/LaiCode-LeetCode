@@ -29,58 +29,40 @@ Output: return the tree root node representing the following tree:
  * }
  */
 class Solution {
+    public int index = 0;
     public TreeNode str2tree(String s) {
         if(s == null || s.length() == 0) {
             return null;
         }
         char[] input = s.toCharArray();
-        return str2treeHelper(input, 0, input.length - 1);
+        return str2treeHelper(input);
     }
-    
-    public TreeNode str2treeHelper(char[] input, int left, int right) {
-        if(input[right] != ')') {
-            //System.out.println("left = " + left + " right = " + right);
-            int value = Integer.parseInt(String.valueOf(input, left, right - left + 1));
-            return new TreeNode(value);
-        }
-        if(left >= right) {
+    public TreeNode str2treeHelper(char[] input) {
+        //System.out.println("index = " + index);
+        if(index == input.length) {
             return null;
         }
-        int bound = left;
-        while(bound < input.length && input[bound] != '(' && input[bound] != ')') {
-            bound++;
+        int left = index;
+        StringBuilder number = new StringBuilder();
+        while(index < input.length && input[index] != '(' && input[index] != ')') {
+            number.append(input[index]);
+            index++;
         }
-        int value = Integer.parseInt(String.valueOf(input, left, bound - left));
+        int value = Integer.valueOf(number + "");
+        //System.out.println("value = " + value);
         TreeNode root = new TreeNode(value);
-        // the right index of left part
-        int mid = findMid(input, left, right);
-        //System.out.println("mid = " + mid);
-        if(mid == -1) {
-            root.left = str2treeHelper(input, bound + 1, right - 1);
-            root.right = null;
+        if(index < input.length && input[index] == '(') {
+            index++;
+            root.left = str2treeHelper(input);
+            index++;
         }
-        else {
-            root.left = str2treeHelper(input, bound + 1, mid - 1);
-            root.right = str2treeHelper(input, mid + 2, right - 1);
+        //System.out.println(input[index] + "" + input[index + 1]);
+        if(index < input.length && input[index] == '(') {
+            index++;
+            root.right = str2treeHelper(input);
+            index++;
         }
         return root;
-    }
-    
-    public int findMid(char[] input, int left, int right) {
-        int balance = 0;
-        while(left < right) {
-            if(input[left] == '(') {
-                balance++;
-            }
-            else if(input[left] == ')') {
-                balance--;
-            }
-            if(input[left] == ')' && input[left + 1] == '(' && balance == 0) {
-                return left;
-            }
-            left++;
-        }
-        return -1;
     }
 }
 
@@ -100,40 +82,43 @@ class Solution {
         if(s == null || s.length() == 0) {
             return null;
         }
-        Deque<TreeNode> stack = new LinkedList<>();
-        char[] input = s.toCharArray();
         int i = 0;
+        char[] input = s.toCharArray();
         TreeNode root = null;
+        Deque<TreeNode> stack = new ArrayDeque<>();
         while(i < input.length) {
-            char curr = input[i];
-            if(curr == '(') {
-                root = stack.peek();
+            if(input[i] == '(') {
+                i++;
+                continue;
+            }
+            if(input[i] == ')') {
+                TreeNode popNode = stack.pop();
+                //System.out.println("popNode = " + popNode.val);
+                i++;
+                continue;
+            }
+            
+            root = stack.peek();
+            StringBuilder number = new StringBuilder();
+            while(i < input.length && input[i] != '(' && input[i] != ')') {
+                number.append(input[i]);
                 i++;
             }
-            else if(curr == ')') {
-                i++;
-                stack.pop();
-            }
-            else {
-                int bound = i;
-                while(bound < input.length && input[bound] != '(' && input[bound] != ')') {
-                    bound++;
+            int value = Integer.valueOf(number.toString());
+            TreeNode curr = new TreeNode(value);
+            //System.out.println("curr = " + value);
+            if(root != null) {
+                if(root.left == null) {
+                    root.left = curr;
                 }
-                int value = Integer.parseInt(String.valueOf(input, i, bound - i));
-                TreeNode currNode = new TreeNode(value);
-                if(root != null) {
-                    if(root.left == null) {
-                        root.left = currNode;
-                    }
-                    else {
-                        root.right = currNode;
-                    }
-                } 
-                stack.push(currNode);
-                i = bound;
+                else {
+                    root.right = curr;
+                }
             }
+            stack.push(curr);
         }
         return stack.pop();
     }
 }
+
 
