@@ -18,6 +18,7 @@ return its zigzag level order traversal as:
 */
 
 
+// method 1: iteration
 /**
  * Definition for a binary tree node.
  * public class TreeNode {
@@ -77,3 +78,47 @@ class Solution {
     }
 }
 
+
+// method 2: iteration
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+        List<List<Integer>> result = new ArrayList<>();
+        if(root == null) {
+            return result;
+        }
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.offer(root);
+        int depth = 0;
+        while(!queue.isEmpty()) {
+            List<Integer> layer = depth % 2 == 0 ? new ArrayList<>() : new LinkedList<>();
+            int size = queue.size();
+            for(int i = 0; i < size; i++) {
+                TreeNode curr = queue.poll();
+                if(depth % 2 == 0) {
+                    layer.add(curr.val);
+                }
+                else {
+                    layer.add(0, curr.val);
+                }
+                if(curr.left != null) {
+                    queue.offer(curr.left);
+                }
+                if(curr.right != null) {
+                    queue.offer(curr.right);
+                }
+            }
+            depth++;
+            result.add(layer);
+        }
+        return result;
+    }
+}
