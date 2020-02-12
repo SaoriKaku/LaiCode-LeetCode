@@ -17,8 +17,7 @@ Your algorithm's time complexity must be better than O(n log n), where n is the 
 */
 
 // method 1: minHeap
-// time complexity: O(n + (n - k)logk) 
-// space complexity: O(n)
+// time complexity: O(n + (n - k)logk), space complexity: O(n)
 class Solution {
     public List<Integer> topKFrequent(int[] nums, int k) {
         /*
@@ -56,9 +55,8 @@ class Solution {
 }
 
 
-// method 2: minHeap
-// time complexity: O(n + nlogn)
-// space complexity: O(n)
+// method 2: maxHeap
+// time complexity: O(n + nlogn), space complexity: O(n)
 class Solution {
     public List<Integer> topKFrequent(int[] nums, int k) {
         /*
@@ -82,6 +80,28 @@ class Solution {
             result.add(maxHeap.poll().getKey());
         }
         //System.out.println(result.size());
+        return result;
+    }
+}
+
+
+// method 3: optimized maxHeap
+// time complexity: O(n + nlogn), space complexity: O(n)
+class Solution {
+    public List<Integer> topKFrequent(int[] nums, int k) {
+        List<Integer> result = new ArrayList<>();
+        Map<Integer, Integer> map = new HashMap<>(); // key: nums[i]; value: count
+        for(int curr: nums) {
+            map.put(curr, map.getOrDefault(curr, 0) + 1);
+        }
+        PriorityQueue<Integer> maxHeap = new PriorityQueue<>((a, b) -> map.get(b) - map.get(a));
+        for(int curr: map.keySet()) {
+            maxHeap.offer(curr);
+        }
+        while(k > 0) {
+            result.add(maxHeap.poll());
+            k--;
+        }
         return result;
     }
 }
