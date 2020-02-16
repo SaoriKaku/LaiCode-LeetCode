@@ -57,3 +57,28 @@ class Solution {
     }
 }
 
+
+// method 2: two pointers
+// time complexity: O(n), space complexity: O(1)
+class Solution {
+    public int removeElement(int[] nums, int val) {
+        if(nums == null || nums.length == 0) {
+            return 0;
+        }
+        int i = 0;
+        int j = 0;
+        while(j < nums.length) {
+            if(nums[j] != val) {
+                nums[i++] = nums[j++];
+            }
+            else {
+                j++;
+            }
+        }
+        return i;
+    }
+}
+
+
+
+
