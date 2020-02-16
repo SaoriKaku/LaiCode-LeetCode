@@ -46,4 +46,29 @@ class Solution {
 }
 
 
+// method 2: two pointers
+// time complexity: O(n), space complexity: O(1)
+class Solution {
+    public int removeDuplicates(int[] nums) {
+        if(nums == null || nums.length == 0) {
+            return 0;
+        }
+        int s = 1;
+        int f = 1;
+        while(f < nums.length) {
+            if(nums[f] != nums[f - 1]) {
+                nums[s++] = nums[f++];
+            }
+            else {
+                f++;
+            }
+        }
+        //System.out.println(Arrays.toString(nums));
+        //System.out.println("s = " + s + ", f = " + f);
+        return s;
+    }
+}
+
+
+
 
