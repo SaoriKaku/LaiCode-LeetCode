@@ -62,3 +62,48 @@ class Solution {
         return false;
     }
 }
+
+
+// method 2: optimized method 1
+// time complexity: O(n), space complexity: O(26) = O(1)
+class Solution {
+    public boolean checkInclusion(String s1, String s2) {
+        if(s1 == null || s2 == null || s1.length() > s2.length()) {
+            return false;
+        }
+        int[] map = new int[26];
+        int k = s1.length(), n = s2.length(), count = 0;
+        for(int i = 0; i < k; i++) {
+            map[s1.charAt(i) - 'a']++;
+        }
+        for(int i = 0; i < k; i++) {
+            int index = s2.charAt(i) - 'a';
+            if(map[index] > 0) {
+                count++;
+            }
+            map[index]--;
+        }
+        if(count == k) {
+            return true;
+        }
+        for(int i = k; i < n; i++) {
+            int left = s2.charAt(i - k) - 'a';
+            int right = s2.charAt(i) - 'a';
+            if(map[left] > -1) { // left > 0, left - 1 > -1
+                count--;
+            }
+            map[left]++;
+            if(map[right] > 0) {
+                count++;
+            }
+            map[right]--;
+            if(count == k) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+
+
+
