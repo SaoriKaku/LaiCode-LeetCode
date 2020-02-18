@@ -52,3 +52,38 @@ class Solution {
 }
 
 
+// method 2: sliding window
+// time complexity: O(n), space complexity: O(1)
+class Solution {
+    public int lengthOfLongestSubstringTwoDistinct(String s) {
+        if(s == null || s.length() == 0) {
+            return 0;
+        }
+        int left = 0, right = 0, result = 0;
+        char[] input = s.toCharArray();
+        Map<Character, Integer> map = new HashMap<>();
+        while(left < s.length()) {
+            while(right < s.length() && map.size() <= 2) {
+                map.put(input[right], map.getOrDefault(input[right], 0) + 1);
+                right++;
+            }
+            //System.out.println("left = " + left + ", right = " + right);
+            if(map.size() == 3) { // size = 3, right, so right - 1 == (size = 3)
+                result = Math.max(result, right - left - 1);
+            }
+            else {
+                result = Math.max(result, right - left);
+            }
+            map.put(input[left], map.get(input[left]) - 1);
+            if(map.get(input[left]) == 0) {
+                map.remove(input[left]);
+            }
+            //System.out.println("set.size = " + set.size());
+            left++;
+        }
+        return result;
+    }
+}
+
+
+
