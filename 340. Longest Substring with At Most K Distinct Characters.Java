@@ -56,4 +56,34 @@ class Solution {
 }
 
 
+// method 2: sliding window, traverse left pointers
+// time complexity: O(n), space complexity: O(k + 1)
+class Solution {
+    public int lengthOfLongestSubstringKDistinct(String s, int k) {
+        if(s == null || s.length() == 0) {
+            return 0;
+        }
+        int left = 0, right = 0, result = 0;
+        char[] input = s.toCharArray();
+        Map<Character, Integer> map = new HashMap<>();
+        while(left < s.length()) {
+            while(right < s.length() && map.size() <= k) {
+                map.put(input[right], map.getOrDefault(input[right], 0) + 1);
+                right++;
+            }
+            if(map.size() == k + 1) {
+                result = Math.max(result, right - left - 1);
+            }
+            else {
+                result = Math.max(result, right - left);
+            }
+            map.put(input[left], map.get(input[left]) - 1);
+            if(map.get(input[left]) == 0) {
+                map.remove(input[left]);
+            }
+            left++;
+        }
+        return result;
+    }
+}
 
