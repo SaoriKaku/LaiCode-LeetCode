@@ -1,30 +1,23 @@
 
 /*
 Given a string s and a non-empty string p, find all the start indices of p's anagrams in s.
-
 Strings consists of lowercase English letters only and the length of both strings s and p will not be larger than 20,100.
-
 The order of output does not matter.
 
 Example 1:
-
 Input:
 s: "cbaebabacd" p: "abc"
-
 Output:
 [0, 6]
-
 Explanation:
 The substring with start index = 0 is "cba", which is an anagram of "abc".
 The substring with start index = 6 is "bac", which is an anagram of "abc".
-Example 2:
 
+Example 2:
 Input:
 s: "abab" p: "ab"
-
 Output:
 [0, 1, 2]
-
 Explanation:
 The substring with start index = 0 is "ab", which is an anagram of "ab".
 The substring with start index = 1 is "ba", which is an anagram of "ab".
@@ -87,3 +80,50 @@ class Solution {
         return result;
     }
 }
+
+
+// method 2: optimized method 1
+// time compleixty: O(s.length); space complexity: O(26)
+class Solution {
+    public List<Integer> findAnagrams(String s, String p) {
+        List<Integer> result = new ArrayList<>();
+        if(s == null || p == null || p.length() > s.length()) {
+            return result;
+        }
+        int[] map = new int[26];
+        int k = p.length(), n = s.length(), count = 0;
+        for(int i = 0; i < k; i++) {
+            map[p.charAt(i) - 'a']++;
+        }
+        for(int i = 0; i < k; i++) {
+            int index = s.charAt(i) - 'a';
+            if(map[index] > 0) {
+                count++;
+            }
+            map[index]--;
+        }
+        if(count == k) {
+            result.add(0);
+        }
+        for(int i = k; i < n; i++) {
+            int left = s.charAt(i - k) - 'a';
+            int right = s.charAt(i) - 'a';
+            if(map[left] > -1) {
+                count--;
+            }
+            map[left]++;
+            if(map[right] > 0) {
+                count++;
+            }
+            map[right]--;
+            if(count == k) {
+                result.add(i - k + 1);
+            }
+        }
+        return result;
+    }
+}
+
+
+
+
