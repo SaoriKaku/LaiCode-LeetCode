@@ -3,11 +3,10 @@
 Given a string S and a string T, find the minimum window in S which will contain all the characters in T in complexity O(n).
 
 Example:
-
 Input: S = "ADOBECODEBANC", T = "ABC"
 Output: "BANC"
-Note:
 
+Note:
 If there is no such window in S that covers all characters in T, return the empty string "".
 If there is such window, you are guaranteed that there will always be only one unique minimum window in S.
 */
@@ -76,4 +75,45 @@ class Solution {
         return minLength == Integer.MAX_VALUE ? "" : s.substring(startIndex, startIndex + minLength);
     }
 }
+
+
+// method 2: sliding window, two pointers
+// time complexity: O(n), space complexity: O(n)
+class Solution {
+    public String minWindow(String s, String t) {
+        if(s == null || s.length() == 0 || t == null || t.length() == 0) {
+            return "";
+        }
+        HashMap<Character, Integer> map = new HashMap<>();
+        int count = 0, left = 0, right = 0, minLength = Integer.MAX_VALUE, minLeft = 0;
+        String result = "";
+        for(int i = 0; i < t.length(); i++) {
+            char curr = t.charAt(i);
+            map.put(curr, map.getOrDefault(curr, 0) + 1);
+        }
+        while(left < s.length()) {
+            while(right < s.length() && count < t.length()) {
+                char rightChar = s.charAt(right);
+                map.put(rightChar, map.getOrDefault(rightChar, 0) - 1);
+                if(map.get(rightChar) >= 0) {
+                    count++;
+                }
+                right++;
+            }
+            if(count >= t.length() && right - left < minLength) {
+                minLength = right - left;
+                minLeft = left;
+            }
+            char leftChar = s.charAt(left);
+            if(map.get(leftChar) >= 0) {
+                count--;
+            }
+            map.put(leftChar, map.get(leftChar) + 1);
+            left++;
+        }
+        return minLength == Integer.MAX_VALUE ? "" : s.substring(minLeft, minLeft + minLength);
+    }
+}
+
+
 
