@@ -55,5 +55,25 @@ class Solution {
 }
 
 
-
-
+// method 2: sliding window
+// time complexity: O(n), space complexity: O(n)
+class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        if(s == null || s.length() == 0) {
+            return 0;
+        }
+        int left = 0, right = 0, result = 0, n = s.length();
+        char[] input = s.toCharArray();
+        Set<Character> set = new HashSet<>();
+        while(left < n) {
+            while(right < n && !set.contains(input[right])) {
+                set.add(input[right]);
+                right++;
+            }
+            result = Math.max(result, right - left);
+            set.remove(input[left]);
+            left++;
+        }
+        return result;
+    }
+}
