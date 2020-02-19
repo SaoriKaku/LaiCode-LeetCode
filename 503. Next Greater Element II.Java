@@ -11,8 +11,8 @@ The second 1's next greater number needs to search circularly, which is also 2.
 Note: The length of given array won't exceed 10000.
 */
 
-// time complexity: O(m * n)
-// space complexity: O(n)
+// method 1: brute force
+// time complexity: O(m * n), space complexity: O(n)
 class Solution {
     public int[] nextGreaterElements(int[] nums) {
         if(nums == null || nums.length == 0) {
@@ -33,8 +33,8 @@ class Solution {
 }
 
 
-// time complexity: O(n)
-// space complexity: O(n)
+// method 2: stack
+// time complexity: O(n), space complexity: O(n)
 class Solution {
     public int[] nextGreaterElements(int[] nums) {
         if(nums == null || nums.length == 0) {
@@ -65,5 +65,30 @@ class Solution {
 }
 
 
-
+// method 3: stack
+// time complexity: O(n), space complexity: O(n)
+class Solution {
+    public int[] nextGreaterElements(int[] nums) {
+        if(nums == null || nums.length == 0) {
+            return nums;
+        }
+        int[] result = new int[nums.length];
+        Arrays.fill(result, -1);
+        Deque<Integer> stack = new ArrayDeque<>(); // store index
+        for(int i = 0; i < nums.length; i++) {
+            while(!stack.isEmpty() && nums[stack.peek()] < nums[i]) {
+                int index = stack.pop();
+                result[index] = nums[i];
+            }
+            stack.push(i);
+        }
+        for(int i = 0; i < nums.length; i++) {
+            while(!stack.isEmpty() && nums[stack.peek()] < nums[i]) {
+                int index = stack.pop();
+                result[index] = nums[i];
+            }
+        }
+        return result;
+    }
+}
 
