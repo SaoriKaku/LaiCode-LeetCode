@@ -67,3 +67,23 @@ class Solution {
 }
 
 
+// method 3: prefix sum
+// time complexity: O(n), space complexity: O(1)
+class Solution {
+    public int maxSubArray(int[] nums) {
+        if(nums == null || nums.length == 0) {
+            return 0;
+        }
+        // result = currSum - min(prevSum)
+        int currSum = 0, minPrevSum = 0, result = Integer.MIN_VALUE;
+        for(int i = 0; i < nums.length; i++) {
+            currSum += nums[i];
+            result = Math.max(result, currSum - minPrevSum);
+            minPrevSum = Math.min(minPrevSum, currSum);
+        }
+        return result;
+    }
+}
+
+
+
