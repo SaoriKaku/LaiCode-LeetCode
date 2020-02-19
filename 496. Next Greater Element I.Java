@@ -132,8 +132,28 @@ class Solution {
 }
 
 
-
-
-
-
-
+// method 2: optimized monotonic stack
+// time complexity: O(m + n), space complexity: O(m + n) 
+class Solution {
+    public int[] nextGreaterElement(int[] nums1, int[] nums2) {
+        if(nums1 == null || nums1.length == 0) {
+            return nums1;
+        }
+        // key = currNum, value = right num bigger than currNum
+        Map<Integer, Integer> map = new HashMap<>();
+        // stack: find the first right num bigger than curr
+        Deque<Integer> stack = new ArrayDeque<>();
+        for(int i = 0; i < nums2.length; i++) {
+            while(!stack.isEmpty() && stack.peek() < nums2[i]) {
+                int currNum = stack.pop();
+                map.put(currNum, nums2[i]);
+            }
+            stack.push(nums2[i]);
+        }
+        int[] result = new int[nums1.length];
+        for(int i = 0; i < nums1.length; i++) {
+            result[i] = map.getOrDefault(nums1[i], -1);
+        }
+        return result;
+    }
+}
