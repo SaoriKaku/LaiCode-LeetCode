@@ -52,3 +52,53 @@ class Solution {
     }
 }
 
+
+// method 2: DP 1D
+// time complexity: O(n), space complexity: O(n)
+class Solution {
+    public int numDecodings(String s) {
+        if(s == null || s.length() == 0) {
+            return 0;
+        }
+        int n = s.length();
+        if(n == 1) {
+            return s.charAt(0) == '0' ? 0 : 1;
+        }
+        if(n == 2) {
+            int temp = Integer.valueOf(s);
+            if(s.charAt(0) == '0' || s.charAt(0) >= '3' && s.charAt(1) == '0') {
+                return 0;
+            }
+            if(temp >= 11 && temp <= 26 && temp != 20) {
+                return 2;
+            }
+            return 1;
+        }
+        int[] ways = new int[n];
+        ways[0] = s.charAt(0) == '0' ? 0 : 1;
+        int temp = Integer.valueOf(s.substring(0, 2));
+        if(s.charAt(0) == '0' || s.charAt(0) >= '3' && s.charAt(1) == '0') {
+            ways[1] = 0;
+        }
+        else if(temp >= 11 && temp <= 26 && temp != 20) {
+            ways[1] = 2;
+        }
+        else {
+            ways[1] = 1;
+        }
+        for(int i = 2; i < n; i++) {
+            if(s.charAt(i) != '0') {
+                ways[i] += ways[i - 1];
+            }
+            if(s.charAt(i - 1) == '1' || s.charAt(i - 1) == '2' && s.charAt(i) <= '6') {
+                ways[i] += ways[i - 2];
+            }
+        }
+        //System.out.println(Arrays.toString(ways));
+        return ways[n - 1];
+    }
+}
+
+
+
+
