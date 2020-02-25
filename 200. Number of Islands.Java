@@ -181,3 +181,79 @@ class Solution {
 }
 
 
+// method 4: Union Find
+// time complexity: O(n * m * 4), space complexity: O(n * m)
+class Solution {
+    class UnionFindSet {
+        private int[] parents;
+        private int[] ranks;
+        public UnionFindSet(int n) {
+            parents = new int[n];
+            ranks = new int[n];
+            for (int i = 0; i < n; ++i) {
+                parents[i] = i;
+            }
+        }
+        public boolean union(int i, int j) {
+            int rootI = find(i);
+            int rootJ = find(j);
+            if (rootI == rootJ) return false;
+            if (ranks[rootI] > ranks[rootJ]) {
+                parents[rootJ] = rootI;           
+            }
+            else if (ranks[rootJ] > ranks[rootI]) {
+                parents[rootI] = rootJ;
+            }
+            else {
+                parents[rootI] = rootJ;
+                ranks[rootJ] += 1;
+            }
+            return true;
+        }
+        public int find(int i) {
+            while (parents[i] != i) {
+                parents[i] = parents[parents[i]];
+                i = parents[i];
+            }
+            return i;
+        }
+    }
+    
+    public int[][] pattern = new int[][] {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+    public int numIslands(char[][] grid) {
+        if(grid == null || grid.length == 0) {
+            return 0;
+        }
+        int row = grid.length;
+        int col = grid[0].length;
+        int count = 0;
+        for(int i = 0; i < row; i++) {
+            for(int j = 0; j < col; j++) {
+                if(grid[i][j] == '1') {
+                    count++;
+                }
+            }
+        }
+        UnionFindSet set = new UnionFindSet(row * col);
+        for(int i = 0; i < row; i++) {
+            for(int j = 0; j < col; j++) {
+                if(grid[i][j] == '1') {
+                    int prevIndex = i * col + j;
+                    for(int k = 0; k < 4; k++) {
+                        int nextI = i + pattern[k][0];
+                        int nextJ = j + pattern[k][1];
+                        if(nextI >= 0 && nextI < row && nextJ >= 0 && nextJ < col && grid[nextI][nextJ] == '1') {
+                            int currIndex = nextI * col + nextJ;
+                            if(set.union(prevIndex, currIndex) ) {
+                                count--;
+                            }
+                        }
+                    } // end for
+                } // grid = 1
+            } // end j
+        } // end i
+        return count;
+    }
+}
+
+
