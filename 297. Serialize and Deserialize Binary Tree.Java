@@ -20,6 +20,7 @@ Note: Do not use class member/global/static variables to store states. Your seri
 */
 
 
+// method 1: preorder
 /**
  * Definition for a binary tree node.
  * public class TreeNode {
@@ -86,4 +87,93 @@ public class Codec {
 // Your Codec object will be instantiated and called as such:
 // Codec codec = new Codec();
 // codec.deserialize(codec.serialize(root));
+
+
+// method 2: level order
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Codec {
+    // Encodes a tree to a single string.
+    public String serialize(TreeNode root) {
+        StringBuilder result = new StringBuilder();
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.offer(root);
+        while(!queue.isEmpty()) {
+            int size = queue.size();
+            for(int i = 0; i < size; i++) {
+                TreeNode curr = queue.poll();
+                if(curr == null) {
+                    result.append("# ");
+                }
+                else {
+                    result.append(curr.val + " ");
+                    queue.offer(curr.left);
+                    queue.offer(curr.right);
+                }
+            }
+        }
+        //System.out.println("result = " + result.toString());
+        return result.toString();
+    }
+
+    // Decodes your encoded data to tree.
+    public TreeNode deserialize(String data) {
+        char[] input = data.toCharArray();
+        int[] index = new int[1];
+        Queue<TreeNode> queue = new LinkedList<>();
+        int value = getValue(input, index);
+        if(value == Integer.MAX_VALUE) {
+            return null;
+        }
+        TreeNode root = new TreeNode(value);
+        queue.offer(root);
+        while(!queue.isEmpty()) {
+            int size = queue.size();
+            for(int i = 0; i < size; i++) {
+                TreeNode curr = queue.poll();
+                int leftValue = getValue(input, index);
+                if(leftValue == Integer.MAX_VALUE) {
+                    curr.left = null;
+                }
+                else {
+                    curr.left = new TreeNode(leftValue);
+                    queue.offer(curr.left);
+                }
+                int rightValue = getValue(input, index);
+                if(rightValue == Integer.MAX_VALUE) {
+                    curr.right = null;
+                }
+                else {
+                    curr.right = new TreeNode(rightValue);
+                    queue.offer(curr.right);
+                }
+            }
+        }
+        return root;
+    }
+    public int getValue(char[] input, int[] index) {
+        StringBuilder data = new StringBuilder();
+        while(index[0] < input.length && input[index[0]] != ' ') {
+            data.append(input[index[0]++]);
+        }
+        index[0]++;
+        String number = data.toString();
+        if(number.equals("#")) {
+            return Integer.MAX_VALUE;
+        }
+        return Integer.valueOf(number);
+    }
+}
+
+// Your Codec object will be instantiated and called as such:
+// Codec codec = new Codec();
+// codec.deserialize(codec.serialize(root));
+
 
