@@ -136,4 +136,59 @@ class Solution {
 }
 
 
+// method 4: DP
+// time complexity: O(n^2), space complexity: O(n^2)
+class Solution {
+    public String longestPalindrome(String s) {
+        if(s == null || s.length() == 0) {
+            return s;
+        }
+        int n = s.length();
+        boolean[][] dp = new boolean[n][n];
+        int start = 0, length = 0;
+        /*
+        base case: dp[i][i] = T, dp[i][i + 1] = T
+        induction rule: dp[i][j] = dp[i+1][j-1] if s[i] == s[j]
+        */
+        
+        for(int i = 0; i < n; i++) {
+            dp[i][i] = true;
+            start = i;
+            length = 1;
+        }
+        for(int i = 0; i < n - 1; i++) {
+            if(s.charAt(i) == s.charAt(i + 1)) {
+                dp[i][i + 1] = true;
+                start = i;
+                length = 2;
+            }
+        }
+        for(int i = 2; i < n; i++) {
+            for(int j = 0; i + j < n; j++) {
+                // x - j = i, x = i + j
+                if(s.charAt(i + j) == s.charAt(j) && dp[j + 1][i + j - 1] == true) {
+                    dp[j][i + j] = true;
+                    start = j;
+                    length = i + 1;
+                }
+                else {
+                    dp[j][i + j] = false;
+                }
+            }
+        }
+        //print2DArray(dp);
+        //System.out.println("start = " + start + ", length = " + length);
+        return s.substring(start, start + length);
+    }
+    public void print2DArray(boolean[][] input) {
+        for(int i = 0; i < input.length; i++) {
+            for(int j = 0; j < input[0].length; j++) {
+                System.out.print(input[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
+}
+
+
 
