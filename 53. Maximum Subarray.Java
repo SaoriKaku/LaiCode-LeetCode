@@ -86,4 +86,19 @@ class Solution {
 }
 
 
+// method 4: prefix sum
+// time complexity: O(n), space complexity: O(1)
+public int maxSubArray(int[] nums) {
+    if(nums == null || nums.length == 0) {
+        return 0;
+    }
+    int result = Integer.MIN_VALUE, sum = 0;
+    for(int num: nums) {
+        sum = sum > 0 ? sum + num : num;
+        result = Math.max(result, sum);
+    }
+    return result;
+}
+
+
 
