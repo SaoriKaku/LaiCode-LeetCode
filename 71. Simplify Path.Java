@@ -77,3 +77,38 @@ class Solution {
 }
 
 
+// method 2: stack
+// time complexity: O(n), space complexity: O(n)
+class Solution {
+    public String simplifyPath(String path) {
+        if(path == null || path.length() == 0) {
+            return "";
+        }
+        String[] steps = path.split("/");
+        //System.out.println(Arrays.toString(steps));
+        Deque<String> stack = new ArrayDeque<>();
+        for(int i = 0; i < steps.length; i++) {
+            if(steps[i].equals("..")) {
+                if(!stack.isEmpty()) {
+                    stack.pop();
+                }
+            }
+            else if(steps[i].equals(".") || steps[i].length() == 0) {
+                continue;
+            }
+            else {
+                stack.push(steps[i]);
+            }
+            //System.out.println(stack);
+        }
+        if(stack.isEmpty()) return "/";
+        String result = "";
+        while(!stack.isEmpty()) {
+            result = "/" + stack.pop() + result;
+        }
+        return result;
+    }
+}
+
+
+
