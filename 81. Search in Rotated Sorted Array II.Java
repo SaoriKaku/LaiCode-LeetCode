@@ -60,5 +60,50 @@ class Solution {
 }
 
 
+// method 2: optimized method 1, binary search with duplicate
+// time complexity: O(logn) -> O(n), space complexity: O(1)
+class Solution {
+    public boolean search(int[] nums, int target) {
+        if(nums == null || nums.length == 0) {
+            return false;
+        }
+        int left = 0, right = nums.length - 1;
+        while(left + 1 < right) {
+            if(left + 1 < nums.length && nums[left + 1] == nums[left]) {
+                left++;
+            }
+            else if(right - 1 >= 0 && nums[right] == nums[right - 1]) {
+                right--;
+            }
+            else {
+                int mid = left + (right - left) / 2;
+                if(nums[mid] == target) {
+                    return true;
+                }
+                else if(nums[left] <= nums[mid]) {
+                    if(nums[left] <= target && target < nums[mid]) {
+                        right = mid - 1;
+                    }
+                    else {
+                        left = mid + 1;
+                    }
+                }
+                else {
+                    if(nums[mid] < target && target <= nums[right]) {
+                        left = mid + 1;
+                    }
+                    else {
+                        right = mid - 1;
+                    }
+                }
+            }
+        }
+        if(nums[left] == target) return true;
+        if(nums[right] == target) return true;
+        return false;
+    }
+}
+
+
 
 
