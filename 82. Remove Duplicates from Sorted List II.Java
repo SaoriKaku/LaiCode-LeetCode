@@ -72,3 +72,43 @@ class Solution {
 }
 
 
+// method 2: linked list
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public ListNode deleteDuplicates(ListNode head) {
+        if(head == null || head.next == null) {
+            return head;
+        }
+        ListNode dummy = new ListNode(-1);
+        //dummy.next = head;
+        ListNode prev = dummy;
+        ListNode curr = head;
+        ListNode realNode = dummy;
+        /*
+        dummy -> 1 -> 2 -> 3 -> 3 -> 4 -> 5
+                      p              c    n
+        dummy -> 1 -> 1
+        */
+        while(curr != null) {
+            ListNode nextNode = curr.next;
+            if((prev == dummy || prev.val != curr.val) && (nextNode == null || curr.val != nextNode.val)) {
+                realNode.next = curr;
+                realNode = curr;
+            }
+            prev = curr;
+            curr = nextNode;
+            prev.next = null;
+        }
+        return dummy.next;
+    }
+}
+
+
+
