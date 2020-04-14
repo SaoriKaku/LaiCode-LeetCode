@@ -161,4 +161,49 @@ class Solution {
 }
 
 
+// method 4: iteration 
+// add curr node += 1
+// left subtree is uncomplete, right subtree count = pow(2, right subtree height) - 1
+// right subtree is uncomplete, left subtree count = pow(2, left subtree height) - 1
+// time complexity: O(logn ^ 2), space complexity: O(logn)
+class Solution {
+    public int countNodes(TreeNode root) {
+        if(root == null) {
+            return 0;
+        }
+        TreeNode curr = root;
+        int count = 0;
+        while(curr != null) {
+            count += 1;
+            int leftNodeLeftHeight = findLeftHeight(curr.left);
+            int leftNoderightHeight = findRightHeight(curr.left);
+            int rightNodeLeftHeight = findLeftHeight(curr.right);
+            if(leftNodeLeftHeight == leftNoderightHeight) {
+                count += Math.pow(2, leftNodeLeftHeight) - 1;
+                curr = curr.right;
+            }
+            else {
+                count += Math.pow(2, rightNodeLeftHeight) - 1;
+                curr = curr.left;
+            }
+        }
+        return count;
+    } 
+    public int findLeftHeight(TreeNode root) {
+        int height = 0;
+        while(root != null) {
+            root = root.left;
+            height++;
+        }
+        return height;
+    }
+    public int findRightHeight(TreeNode root) {
+        int height = 0;
+        while(root != null) {
+            root = root.right;
+            height++;
+        }
+        return height;
+    }
+}
 
