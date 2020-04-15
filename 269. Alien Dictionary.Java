@@ -44,56 +44,61 @@ There may be multiple valid order of letters, return any one of them is fine.
 // time complexity: O(n * m), space complexity: O(n * m)
 class Solution {
     public String alienOrder(String[] words) {
-        // Map<Character, Set<Character>>
-        Map<Character, Set<Character>> successors = new HashMap<>();
-        for(int i = 0; i < words.length; i++) {
-            for(int j = 0; j < words[i].length(); j++) {
-                char curr = words[i].charAt(j);
-                if(!successors.containsKey(curr)) {
-                    successors.put(curr, new HashSet<>());
-                }
+        Map<Character, Integer> indegreeMap = new HashMap<>();
+        Map<Character, Set<Character>> childrenMap = new HashMap<>();
+        for(String word: words) {
+            for(char curr: word.toCharArray()) {
+                childrenMap.putIfAbsent(curr, new HashSet<>());
+                indegreeMap.putIfAbsent(curr, 0);
             }
         }
+        // childrenMap
         for(int i = 1; i < words.length; i++) {
-            char[] prevWord = words[i - 1].toCharArray();
-            char[] currWord = words[i].toCharArray();
+            char[] word1 = words[i-1].toCharArray();
+            char[] word2 = words[i].toCharArray();
             int index = 0;
-            while(index < prevWord.length && index < currWord.length && prevWord[index] == currWord[index]) {
+            while(index < word1.length && index < word2.length && word1[index] == word2[index]) {
                 index++;
             }
-            if(index == prevWord.length || index == currWord.length) {
+            if(index == word1.length || index == word2.length) {
+                if(word1.length > word2.length) {
+                    return "";
+                }
                 continue;
             }
-            successors.get(prevWord[index]).add(currWord[index]);
+            childrenMap.get(word1[index]).add(word2[index]);
         }
-        //System.out.println("successors: " + successors);
-        // Map<Character, Integer>
-        Map<Character, Integer> indegree = new HashMap<>();
-        for(char ancestor: successors.keySet()) {
-            for(char successor: successors.get(ancestor)) {
-                indegree.put(successor, indegree.getOrDefault(successor, 0) + 1);
+        // indegreeMap
+        for(char parent: childrenMap.keySet()) {
+            for(char children: childrenMap.get(parent)) {
+                indegreeMap.put(children, indegreeMap.getOrDefault(children, 0) + 1);
             }
         }
-        //System.out.println("indegree: " + indegree);
+        // System.out.println("childrenMap: " + childrenMap);
+        // System.out.println("indegreeMap: " + indegreeMap);
+        // queue
         Queue<Character> queue = new LinkedList<>();
-        for(char curr: successors.keySet()) {
-            if(!indegree.containsKey(curr)) {
-                indegree.put(curr, 0);
+        for(char curr: childrenMap.keySet()) {
+            if(indegreeMap.get(curr) == 0) {
                 queue.offer(curr);
             }
         }
         StringBuilder result = new StringBuilder();
         while(!queue.isEmpty()) {
-            char currChar = queue.poll();
-            result.append(currChar);
-            for(char next: successors.get(currChar)) {
-                indegree.put(next, indegree.get(next) - 1);
-                if(indegree.get(next) == 0) {
-                    queue.offer(next);
+            char parent = queue.poll();
+            result.append(parent);
+            for(char neighbor: childrenMap.get(parent)) {
+                indegreeMap.put(neighbor, indegreeMap.get(neighbor) - 1);
+                if(indegreeMap.get(neighbor) == 0) {
+                    queue.offer(neighbor);
                 }
             }
         }
-        return result.length() == successors.size() ? String.valueOf(result) : "";
+        // System.out.println("result: " + String.valueOf(result));
+        return result.length() == childrenMap.size() ? String.valueOf(result) : "";
     }
 }
+
+
+
 
