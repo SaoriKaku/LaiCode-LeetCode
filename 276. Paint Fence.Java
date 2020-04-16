@@ -25,12 +25,17 @@ Explanation: Take c1 as color 1, c2 as color 2. All possible ways are:
 // method 1: DP(1D)
 // time complexity: O(n), space complexity: O(n)
 class Solution {
+    /*
+    每个格子可以有两种可能：i same with i-1 + i diff with i-1
+    1. ith different from the i-1 th post? k-1
+    diff[i] = total[i-1] * (k-1)，i为i-1每一个可能性乘以(k-1)，1为i-1的一种可能性
+    2. ith post make it the same as the i-1th 
+    same[i] = diff[i-1] * 1, i和i-1可能性相同
+
+    total[i] = total[i-1]*(k-1) + diff[i-1]
+             = total[i-1]*(k-1) + total[i-2]*(k-1)
+    */
     public int numWays(int n, int k) {
-        /*
-        total = keep[i] + diff[i]
-        if color i = i - 1, keep[i] = keep[i - 1];
-        if color i != i - 1, diff[i] = total[i - 1] * (k - 1);
-        */
         if(n == 0 || k == 0) {
             return 0;
         }
@@ -40,20 +45,15 @@ class Solution {
         if(n == 2) {
             return k * k;
         }
-        int[] keep = new int[n]; // i = i - 1
-        int[] diff = new int[n]; // i != i - 1
-        keep[0] = 0;
-        diff[0] = k;
-        for(int i = 1; i < n; i++) {
-            keep[i] = diff[i - 1];
-            diff[i] = (keep[i - 1] + diff[i - 1]) * (k - 1);
+        int[] dp = new int[n];
+        dp[0] = k;
+        dp[1] = k * k;
+        for(int i = 2; i < n; i++) {
+            dp[i] = dp[i-1] * (k-1) + dp[i-2] * (k-1);
         }
-        //System.out.println("keep: " + Arrays.toString(keep));
-        //System.out.println("diff: " + Arrays.toString(diff));
-        return keep[n - 1] + diff[n - 1];
+        return dp[n-1];
     }
 }
-
 
 
 
