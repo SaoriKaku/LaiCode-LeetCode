@@ -52,3 +52,38 @@ class Solution {
 }
 
 
+// method 2: linked list in cycle
+// time complexity: O(nlogn), space complexity: O(1)
+class Solution {
+    /*
+    index.next = nums[index], index.next = corresponding value
+    index: 0 1 2 3 4
+    value: 1 3 4 2 2
+    0 -> 1 -> 3 -> 2 -> 4 -> 2
+         s
+    f
+    index: 0 1 2 3 4
+    value: 3 1 3 4 2
+    0 -> 3 -> 4 -> 2 -> 3
+    */
+    public int findDuplicate(int[] nums) {
+        if(nums == null || nums.length == 0) {
+            return 0;
+        }
+        int slow = nums[0], fast = nums[0];
+        do {
+            //System.out.println("slow = " + slow + ", fast = " + fast);
+            slow = nums[slow];
+            fast = nums[nums[fast]];
+        } while(slow != fast);
+        fast = nums[0];
+        while(slow != fast) {
+            slow = nums[slow];
+            fast = nums[fast];
+        }
+        return slow;
+    }
+}
+
+
+
