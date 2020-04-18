@@ -34,7 +34,7 @@ In this question, we represent the board using a 2D array. In principle, the boa
 
 
 // method 1: 2D array
-// time complexity: O(n), space complexity: O(n)
+// time complexity: O(m * n), space complexity: O(m * n)
 class Solution {
     public int[][] pattern = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}, {1, 1}, {-1, -1}, {1, -1}, {-1, 1}};
     public void gameOfLife(int[][] board) {
@@ -91,4 +91,59 @@ class Solution {
         }
     }
 }
+
+
+// method 2: 2D array
+// time complexity: O(m * n), space complexity: O(1)
+class Solution {
+    private int[][] pattern = new int[][] {{0, 1}, {0, -1}, {-1, 0}, {1, 0}, 
+                                           {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
+    /*
+    0: 0 -> 0, dead -> dead
+    1: 1 -> 1, live -> live
+    2: 0 -> 1, dead -> live
+    3: 1 -> 0, live -> dead
+    */
+    public void gameOfLife(int[][] board) {
+        if(board == null || board.length == 0) {
+            return;
+        }
+        int row = board.length, col = board[0].length;
+        for(int i = 0; i < row; i++) {
+            for(int j = 0; j < col; j++) {
+                int count = getLiveCount(board, i, j, row, col);
+                if(board[i][j] == 0) {
+                    board[i][j] = count == 3 ? 2 : 0;
+                }
+                else { // board[i][j] == 1
+                    board[i][j] = count < 2 || count > 3 ? 3 : 1;
+                }
+            }
+        }
+        for(int i = 0; i < row; i++) {
+            for(int j = 0; j < col; j++) {
+                if(board[i][j] == 2) {
+                    board[i][j] = 1;
+                }
+                else if(board[i][j] == 3) {
+                    board[i][j] = 0;
+                }
+            }
+        }
+    }
+    public int getLiveCount(int[][] board, int x, int y, int row, int col) {
+        int count = 0;
+        for(int i = 0; i < pattern.length; i++) {
+            int nextX = x + pattern[i][0];
+            int nextY = y + pattern[i][1];
+            if(nextX >= 0 && nextX < row && nextY >= 0 && nextY < col) {
+                if(board[nextX][nextY] % 2 == 1) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+}
+
 
