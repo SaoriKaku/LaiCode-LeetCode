@@ -11,18 +11,22 @@ Initially, the 2d grid grid is filled with water. (Assume 0 represents water and
 0 0 0
 0 0 0
 0 0 0
+
 Operation #1: addLand(0, 0) turns the water at grid[0][0] into a land.
 1 0 0
 0 0 0   Number of islands = 1
 0 0 0
+
 Operation #2: addLand(0, 1) turns the water at grid[0][1] into a land.
 1 1 0
 0 0 0   Number of islands = 1
 0 0 0
+
 Operation #3: addLand(1, 2) turns the water at grid[1][2] into a land.
 1 1 0
 0 0 1   Number of islands = 2
 0 0 0
+
 Operation #4: addLand(2, 1) turns the water at grid[2][1] into a land.
 1 1 0
 0 0 1   Number of islands = 3
@@ -35,67 +39,68 @@ Follow up: Can you do it in time complexity O(k log mn), where k is the length o
 // method 1: union find
 // time complexity: O(m * n + k), m * n build union find, k union find, space complexity: O(m * n)
 class Solution {
-    class UnionFind {
-        private int[] parents;
-        private int[] ranks;
+    /*
+    1. 逐个添加island到地图上，count+1
+    2. 查找当前island的周围四个，
+       如果可以union，说明之前两个island不相连，现在连接，count-1；
+       如果无法union，说明之前就是连接的，也就是这个点之前也是别的点的邻居，所以不用考虑
+    */
+    class UnionFind{
+        private int[] parent;
+        private int[] rank;
         public UnionFind(int n) {
-            parents = new int[n];
-            ranks = new int[n];
-            for(int i = 0; i < n; i++) {
-                parents[i] = i;
-            }
-        }
-        public int find(int i) {
-            while(parents[i] != i) {
-                parents[i] = parents[parents[i]];
-                i = parents[i];
-            }
-            return i;
+            parent = new int[n];
+            rank = new int[n];
+            Arrays.fill(parent, -1);
         }
         public boolean union(int i, int j) {
             int rootI = find(i);
             int rootJ = find(j);
-            if(rootI == rootJ) {
-                return false;
+            if(rootI == rootJ) return false;
+            if(rank[rootI] == rank[rootJ]) {
+                parent[rootI] = rootJ;
+                rank[rootJ]++;
             }
-            if(ranks[rootI] > ranks[rootJ]) {
-                parents[rootJ] = rootI;
-            }
-            else if(ranks[rootJ] > ranks[rootI]) {
-                parents[rootI] = rootJ;
+            else if(rank[rootI] < rank[rootJ]) {
+                parent[rootI] = rootJ;
             }
             else {
-                parents[rootJ] = rootI;
-                ranks[rootI]++;
+                parent[rootJ] = rootI;
             }
             return true;
         }
+        public int find(int i) {
+            while(parent[i] != i) {
+                parent[i] = parent[parent[i]];
+                i = parent[i];
+            }
+            return i;
+        }
     }
-    public int[][] patterns = new int[][] {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+    private int[][] pattern = new int[][] {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
     public List<Integer> numIslands2(int m, int n, int[][] positions) {
+        List<Integer> result = new ArrayList<>();
         if(positions == null || positions.length == 0) {
-            return new ArrayList<>();
+            return result;
         }
         UnionFind uf = new UnionFind(m * n);
-        int[][] islands = new int[m][n];
         int count = 0;
-        List<Integer> result = new ArrayList<>();
         for(int i = 0; i < positions.length; i++) {
             int x = positions[i][0];
             int y = positions[i][1];
-            int prevIndex = x * n + y;
-            if(islands[x][y] == 1) {
+            int index = x * n + y;
+            if(uf.parent[index] != -1) {
                 result.add(count);
                 continue;
             }
-            islands[x][y] = 1;
+            uf.parent[index] = index;
             count++;
-            for(int j = 0; j < 4; j++) {
-                int nextX = x + patterns[j][0];
-                int nextY = y + patterns[j][1];
-                if(nextX >= 0 && nextX < m && nextY >= 0 && nextY < n && islands[nextX][nextY] == 1) {
-                    int currIndex = nextX * n + nextY;
-                    if(uf.union(prevIndex, currIndex)) {
+            for(int j = 0; j < pattern.length; j++) {
+                int nextX = x + pattern[j][0];
+                int nextY = y + pattern[j][1];
+                int nextIndex = nextX * n + nextY;
+                if(nextX >= 0 && nextX < m && nextY >= 0 && nextY < n && uf.parent[nextIndex] != -1) {
+                    if(uf.union(index, nextIndex)) {
                         count--;
                     }
                 }
