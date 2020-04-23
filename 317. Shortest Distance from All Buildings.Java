@@ -176,4 +176,74 @@ class Solution {
 }
 
 
+/*
+method 3: bfs, from each building, buildng count = k
+time complexity: O(k * m * n), space complexity: O(m * n)
+*/
+class Solution {
+    private int[][] pattern = new int[][] {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+    public int shortestDistance(int[][] grid) {
+        if(grid == null || grid.length == 0) {
+            return 0;
+        }
+        int row = grid.length, col = grid[0].length;
+        // totol distance from a position where grid[i][j] == 0
+        int[][] dist = new int[row][col];
+        // how many buildings(grid[i][j] == 1) this position(grid[i][j] == 0) has been reached
+        int[][] reachedBuilding = new int[row][col];
+        int totalBuildingCount = 0;
+        for(int i = 0; i < row; i++) {
+            for(int j = 0; j < col; j++) {
+                if(grid[i][j] == 1) {
+                    totalBuildingCount++;
+                    int[][] visited = new int[row][col];
+                    visited[i][j] = 1;
+                    Queue<int[]> queue = new LinkedList<>();
+                    queue.offer(new int[]{i, j});
+                    int layer = 0;
+                    while(!queue.isEmpty()) {
+                        int size = queue.size();
+                        layer++;
+                        for(int l = 0; l < size; l++) {
+                            int[] currNode = queue.poll();
+                            int x = currNode[0];
+                            int y = currNode[1];
+                            for(int k = 0; k < pattern.length; k++) {
+                                int nextX = x + pattern[k][0];
+                                int nextY = y + pattern[k][1];
+                                if(nextX >= 0 && nextX < row && nextY >= 0 && nextY < col && visited[nextX][nextY] == 0 && grid[nextX][nextY] == 0) {
+                                    reachedBuilding[nextX][nextY] += 1;
+                                    dist[nextX][nextY] += layer;
+                                    visited[nextX][nextY] = 1;
+                                    queue.offer(new int[]{nextX, nextY});
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        //print2DArray(dist);
+        int min = Integer.MAX_VALUE;
+        for(int i = 0; i < row; i++) {
+            for(int j = 0; j < col; j++) {
+                if(grid[i][j] == 0 && reachedBuilding[i][j] == totalBuildingCount) {
+                    min = Math.min(min, dist[i][j]);
+                } 
+            }
+        }
+        return min == Integer.MAX_VALUE ? -1 : min;
+    }
+    public void print2DArray(int[][] array) {
+        for(int i = 0; i < array.length; i++) {
+            for(int j = 0; j < array[0].length; j++) {
+                System.out.print(array[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
+}
+
+
+
 
