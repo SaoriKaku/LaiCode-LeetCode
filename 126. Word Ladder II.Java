@@ -32,104 +32,7 @@ Explanation: The endWord "cog" is not in wordList, therefore no possible transfo
 */
 
 
-/*
-method 1: BFS + DFS, BFS to build graph, DFS to get result from graph
-wordList: n, each word length: m
-time complexity: 
-BFS: O((26 * m)^n), branch factor: 26 * m; DFS: branch factor: n, tree height: n, O(n^n)
-space complexity: O((n*m)^2)
-*/
-class Solution {
-    public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {
-        List<List<String>> result = new ArrayList<>();
-        if(wordList == null || wordList.size() == 0 || beginWord == null || beginWord.length() == 0 || endWord == null || endWord.length() == 0) {
-            return result;
-        }
-        Set<String> dict = new HashSet<>();
-        for(String word: wordList) {
-            dict.add(word);
-        }
-        if(!dict.contains(endWord)) {
-            return result;
-        }
-        // map<key = word, value = BFS level>
-        Map<String, Integer> wordLevel = new HashMap<>();
-        // map<key = word, value = a list of word's parents>
-        Map<String, List<String>> wordBack = new HashMap<>();
-        Queue<String> queue = new ArrayDeque<>();
-        queue.offer(beginWord);
-        int level = 1;
-        boolean found = false;
-        // BFS
-        while(!queue.isEmpty()) {
-            int size = queue.size();
-            for(int i = 0; i < size; i++) {
-                String parent = queue.poll();
-                char[] currWord = parent.toCharArray();
-                for(int j = 0; j < currWord.length; j++) {
-                    char prev = currWord[j];
-                    // if(parent.equals("lot")) {
-                    //     System.out.println("test6: " + String.valueOf(currWord));
-                    // }
-                    for(int k = 0; k < 26; k++) {
-                        currWord[j] = (char)(k + 'a');
-                        String nextWord = String.valueOf(currWord);
-                        // update wordLevel, when level == level
-                        // update wordBack, add parent list
-                        if(dict.contains(nextWord)) {
-                            dict.remove(nextWord);
-                            if(nextWord.equals(endWord)) {
-                                found = true;
-                            }
-                            else {
-                                queue.offer(nextWord);
-                            }
-                            wordLevel.put(nextWord, level);
-                            List<String> parents = new ArrayList<>();
-                            parents.add(parent);
-                            wordBack.put(nextWord, parents);
-                        }
-                        else if(wordLevel.containsKey(nextWord) && wordLevel.get(nextWord) == level) {
-                            List<String> parents = wordBack.get(nextWord);
-                            parents.add(parent);
-                            wordBack.put(nextWord, parents);
-                        }
-                         
-                    } // for 26 letters
-                    currWord[j] = prev;
-                }// for each char
-            }// for layer 
-            level++;
-        }
-        
-        // DFS
-        if(found) {
-            List<String> solu = new ArrayList<>();
-            dfs(beginWord, endWord, wordBack, solu, result);
-        }
-        return result;
-    }
-    
-    public void dfs(String beginWord, String curr, Map<String, List<String>> wordBack, List<String> solu, List<List<String>> result) {
-        if(curr.equals(beginWord)) {
-            solu.add(beginWord); // from endWord to beginWord
-            Collections.reverse(solu);
-            result.add(new ArrayList<>(solu));
-            Collections.reverse(solu);
-            solu.remove(beginWord);
-            return;
-        }
-        List<String> parents = wordBack.get(curr);
-        for(String parent: parents) {
-            solu.add(curr);
-            dfs(beginWord, parent, wordBack, solu, result);
-            solu.remove(curr);
-        }
-    }
-}
-
-
-// method 1: bfs + dfs, wordList size = n, maxLength word = m
+// method 1: BFS + DFS, BFS to build graph, DFS to get result from graph(endWord to beginWord), wordList size = n, maxLength word = m
 // time complexity: O(bfs: (m * 26)^n + dfs: n^n), space complexity: O(nm ^2)
 class Solution {
     public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {
@@ -211,4 +114,106 @@ class Solution {
         }
     }
 }
+
+
+/* data structure: set<Word>
+    map<key: word, value: list of word's parents>
+    map<key: word, value: word's level>
+    bfs:
+    1. push begin word into the queue
+    2. for each word = queue.poll(), change each every character to check whether the new word in wordList
+    if so, remove new word from wordList, add new word to queue
+    3. record word's chidlren -> new word
+    problem: for the first children, we remove new word from dict, add new word to queue
+    when we generate the children again, we check a map and whether the new word is generated at the same layer
+    dfs: 
+    1. find all path from begin word to end word
+    2. only return the shortest ways
+*/
+// method 2: bfs + dfs, bfs to build graph, dfs to get result from graph(beginWord to endWord)
+// wordList.length = n, word.length = m, time complexity: O((m * 26)^n), space complexity: O(m * n)
+class Solution {
+    public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {
+        if(beginWord == null || beginWord.length() == 0 || endWord == null || endWord.length() == 0 || wordList == null || wordList.size() == 0) {
+            return new ArrayList<>();
+        }
+        Set<String> dict = new HashSet<>(wordList);
+        if(!dict.contains(endWord)) {
+            return new ArrayList<>();
+        }
+        Map<String, Integer> levelMap = new HashMap<>();
+        Map<String, List<String>> childrenMap = new HashMap<>();
+        if(bfs(beginWord, endWord, dict, levelMap, childrenMap)) {
+            List<String> currList = new ArrayList<>();
+            List<List<String>> result = new ArrayList<>();
+            dfs(beginWord, endWord, childrenMap, currList, result);
+            return result;
+        }
+        return new ArrayList<>();
+    }
+    public void dfs(String currWord, String endWord, Map<String, List<String>> childrenMap, List<String> currList, List<List<String>> result) {
+        currList.add(currWord);
+        if(currWord.equals(endWord)) {
+            if(result.size() == 0 || result.get(0).size() > currList.size()) {
+                result.clear();
+                result.add(new ArrayList<>(currList));
+            }
+            else if(result.get(0).size() == currList.size()) {
+                result.add(new ArrayList<>(currList));
+            }
+            currList.remove(currList.size() - 1);
+            return;
+        }
+        if(childrenMap.containsKey(currWord)) {
+            for(String nextWord: childrenMap.get(currWord)) {
+                dfs(nextWord, endWord, childrenMap, currList, result);
+            }
+        }
+        currList.remove(currList.size() - 1);
+    }
+    public boolean bfs(String beginWord, String endWord, Set<String> dict, Map<String, Integer> levelMap, Map<String, List<String>> childrenMap) {
+        Queue<String> queue = new LinkedList<>();
+        queue.offer(beginWord);
+        dict.remove(beginWord);
+        boolean found = false;
+        int level = 0;
+        while(!queue.isEmpty()) {
+            int size = queue.size();
+            level += 1;
+            for(int i = 0; i < size; i++) {
+                String currWord = queue.poll();
+                char[] currWordArray = currWord.toCharArray();
+                for(int j = 0; j < currWordArray.length; j++) {
+                    char currChar = currWordArray[j];
+                    for(int k = 0; k < 26; k++) {
+                        currWordArray[j] = (char)('a' + k);
+                        String nextWord = String.valueOf(currWordArray);
+                        if(nextWord.equals(endWord)) {
+                            dict.remove(endWord);
+                            levelMap.put(endWord, level);
+                            childrenMap.putIfAbsent(currWord, new ArrayList<>());
+                            childrenMap.get(currWord).add(endWord);
+                            found = true;
+                        }
+                        else if(dict.contains(nextWord)) {
+                            dict.remove(nextWord);
+                            levelMap.put(nextWord, level);
+                            childrenMap.putIfAbsent(currWord, new ArrayList<>());
+                            childrenMap.get(currWord).add(nextWord);
+                            queue.offer(nextWord);
+                        }
+                        else if(levelMap.containsKey(nextWord) && levelMap.get(nextWord) == level) {
+                            childrenMap.putIfAbsent(currWord, new ArrayList<>());
+                            childrenMap.get(currWord).add(nextWord);
+                        }
+                    }
+                    currWordArray[j] = currChar;
+                }
+            }
+        }
+        return found;
+    }
+}
+
+
 
