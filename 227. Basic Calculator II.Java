@@ -62,3 +62,48 @@ class Solution {
 }
 
 
+// method 2: string
+// time complexity: O(n), space complexity: O(1)
+class Solution {
+    public int calculate(String s) {
+        if(s == null || s.length() == 0) {
+            return 0;
+        }
+        int number = 0, prevNumber = 0, result = 0;
+        char sign = '+';
+        Set<Character> signs = new HashSet<>();
+        signs.add('+');
+        signs.add('-');
+        signs.add('*');
+        signs.add('/');
+        for(int i = 0; i < s.length(); i++) {
+            char currChar = s.charAt(i);
+            if(Character.isDigit(currChar)) {
+                number = 10 * number + (int)(currChar - '0');
+            }
+            if(signs.contains(currChar) || i == s.length() - 1) {
+                if(sign == '+') {
+                    result += prevNumber;
+                    prevNumber = number;
+                }
+                else if(sign == '-') {
+                    result += prevNumber;
+                    prevNumber = -1 * number;
+                }
+                else if(sign == '*') {
+                    prevNumber = prevNumber * number;
+                }
+                else {
+                    prevNumber = prevNumber / number;
+                }
+                sign = currChar;
+                number = 0;
+            }
+            System.out.println("i = " + i + ", prev = " + prevNumber + ", number = " + number + ", result = " + result);
+        }
+        result += prevNumber;
+        return result;
+    }
+}
+
+
