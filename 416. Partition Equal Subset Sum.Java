@@ -67,3 +67,38 @@ induction rule: [1, 2, 3]
 }
 
 
+// method 2: dfs + memorization
+// time complexity: O(m * n), space complexity: O(m * n)
+class Solution {
+    /*
+       ""
+      /  \ 
+    1      _
+   / \    / \
+ 11  1_  _1  __
+    */
+    public boolean canPartition(int[] nums) {
+        if(nums == null || nums.length == 0) {
+            return false;
+        }
+        int sum = 0;
+        for(int num: nums) {
+            sum += num;
+        }
+        if(sum % 2 == 1) return false;
+        sum /= 2;
+        boolean[][] visited = new boolean[nums.length][sum + 1];
+        return dfs(nums, 0, sum, visited);
+    }
+    public boolean dfs(int[] nums, int index, int target, boolean[][] visited) {
+        if(target == 0) return true;
+        if(target < 0 || index == nums.length || visited[index][target]) return false;
+        visited[index][target] = true;
+        return dfs(nums, index + 1, target, visited) || dfs(nums, index + 1, target - nums[index], visited);
+    }
+}
+
+
+
+
+
