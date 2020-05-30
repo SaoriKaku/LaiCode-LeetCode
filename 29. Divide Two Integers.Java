@@ -61,4 +61,54 @@ class Solution {
 }
 
 
+// method 2: binary search
+// time complexity: O(log(dividend / divisor)), space complexity: O(1)
+class Solution {
+    /*
+    1. find the smaller integer bigger than dividend -> divisor * 2 > dividend
+    2. find the largest integer result -> result * divisor <= dividend 
+    */
+    public int divide(int dividend, int divisor) {
+        int sign = 1;
+        long dividendLong = (long)dividend;
+        long divisorLong = (long)divisor;
+        if(dividendLong < 0) {
+            sign *= -1;
+            dividendLong *= -1;
+        }
+        if(divisorLong < 0) {
+            sign *= -1;
+            divisorLong *= -1;
+        }
+        long right = 1;
+        while(divisorLong * right < dividendLong) {
+            right *= 2;
+        }
+        //System.out.println("right = " + right);
+        long left = 0;
+        while(left + 1 < right) {
+            long mid = left + ((right - left) >> 1);
+            //System.out.println("mid = " + mid + ", left = " + left  + ", right = " + right);
+            if(mid * divisorLong == dividendLong) {
+                return (int)mid;
+            }
+            else if(mid * divisorLong < dividendLong) {
+                left = mid;
+            }
+            else {
+                right = mid - 1;
+            }
+        }
+        if(divisorLong * right <= dividendLong) {
+            long result = sign * right;
+            if(result > Integer.MAX_VALUE || result < Integer.MIN_VALUE) {
+                return Integer.MAX_VALUE;
+            }
+            return (int)result;
+        }
+        return sign * (int)left;
+    }
+}
+
+
 
