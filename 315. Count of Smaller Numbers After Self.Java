@@ -67,3 +67,68 @@ class Solution {
 }
 
 
+// method 2: merge sort
+// time complexity: O(nlogn), space complexity: O(n)
+class Solution {
+    class Item {
+        int value;
+        int index;
+        public Item(int index, int value) {
+            this.value = value;
+            this.index = index;
+        }
+    }
+    public List<Integer> countSmaller(int[] nums) {
+        if(nums == null || nums.length == 0) {
+            return new ArrayList<>();
+        }
+        Item[] items = new Item[nums.length];
+        for(int i = 0; i < nums.length; i++) {
+            items[i] = new Item(i, nums[i]);
+        }
+        Item[] helper = new Item[nums.length];
+        int[] counts = new int[nums.length];
+        mergesort(items, helper, counts, 0, nums.length - 1);
+        List<Integer> result = new ArrayList<>();
+        for(int count: counts) {
+            result.add(count);
+        }
+        return result;
+    }
+    public void mergesort(Item[] items, Item[] helper, int[] counts, int left, int right) {
+        if(left >= right) return;
+        int mid = left + (right - left) / 2;
+        mergesort(items, helper, counts, left, mid);
+        mergesort(items, helper, counts, mid + 1, right);
+        merge(items, helper, counts, left, mid, right);
+    }
+    public void merge(Item[] items, Item[] helper, int[] counts, int left, int mid, int right) {
+        for(int i = left; i <= right; i++) {
+            helper[i] = items[i];
+        }
+        int smallerCount = 0, leftIndex = left, rightIndex = mid + 1;
+        while(leftIndex <= mid && rightIndex <= right) {
+            if(helper[leftIndex].value <= helper[rightIndex].value) {
+                counts[helper[leftIndex].index] += smallerCount;
+                items[left++] = helper[leftIndex++];
+            }
+            else {
+                /* 
+                有多少right part排在当前left part某个数字的前面，就表明有多少数字比这个数字小
+                所以每当右边数字比左边小的时候，count++
+                1. 当左边数字小的时候，添加左边数字，更新左边数字的count[i] += curr count
+                2. 当右边数字小的时候，添加右边数字，count++
+                */
+                smallerCount++;
+                items[left++] = helper[rightIndex++];
+            }
+        }
+        while(leftIndex <= mid) {
+            counts[helper[leftIndex].index] += smallerCount;
+            items[left++] = helper[leftIndex++];
+        }
+    }
+}
+
+
+
