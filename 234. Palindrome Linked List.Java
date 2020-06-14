@@ -3,11 +3,10 @@
 Given a singly linked list, determine if it is a palindrome.
 
 Example 1:
-
 Input: 1->2
 Output: false
-Example 2:
 
+Example 2:
 Input: 1->2->2->1
 Output: true
 Follow up:
@@ -122,3 +121,28 @@ class Solution {
         return true;
     }
 }
+
+
+// method 3: recursion
+// time complexity: O(n), space complexity: O(n)
+class Solution {
+    public static ListNode curr;
+    public boolean isPalindrome(ListNode head) {
+        curr = head;
+        return helper(head);
+    }
+    public boolean helper(ListNode head) {
+        if(head == null) {
+            return true;
+        }
+        if(helper(head.next)) {
+            if(curr.val == head.val) {
+                curr = curr.next;
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+}
+
