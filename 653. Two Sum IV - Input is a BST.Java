@@ -3,7 +3,6 @@
 Given a Binary Search Tree and a target number, return true if there exist two elements in the BST such that their sum is equal to the given target.
 
 Example 1:
-
 Input: 
     5
    / \
@@ -12,12 +11,9 @@ Input:
 2   4   7
 
 Target = 9
-
 Output: True
  
-
 Example 2:
-
 Input: 
     5
    / \
@@ -26,9 +22,9 @@ Input:
 2   4   7
 
 Target = 28
-
 Output: False
 */
+
 
 // method 1: inOrder
 // time compleixty: O(n), space complexity: O(n)
@@ -126,4 +122,48 @@ class Solution {
 }
 
 
-
+// method 4: two pointer, one from smallest, one from biggest
+// time complexity: O(n), space complexity: O(height of tree)
+class Solution {
+    public boolean findTarget(TreeNode root, int k) {
+        if(root == null) return false;
+        Deque<TreeNode> leftStack = new ArrayDeque<>();
+        Deque<TreeNode> rightStack = new ArrayDeque<>();
+        TreeNode curr = root;
+        while(curr != null) {
+            leftStack.push(curr);
+            curr = curr.left;
+        }
+        curr = root;
+        while(curr != null) {
+            rightStack.push(curr);
+            curr = curr.right;
+        }
+        while(!leftStack.isEmpty() && !rightStack.isEmpty() && leftStack.peek() != rightStack.peek()) {
+            TreeNode leftStackNode = leftStack.peek();
+            TreeNode rightStackNode = rightStack.peek();
+            int sum = leftStackNode.val + rightStackNode.val;
+            //System.out.println("left = " + leftStackNode.val + ", right = " + rightStackNode.val);
+            //System.out.println("sum = " + sum);
+            if(sum == k) {
+                return true;
+            }
+            else if(sum < k) { // leftStack.push();
+                curr = leftStack.pop().right;
+                while(curr != null) {
+                    leftStack.push(curr);
+                    curr = curr.left;
+                }
+            }
+            else {
+                curr = rightStack.pop().left;
+                while(curr != null) {
+                    rightStack.push(curr);
+                    curr = curr.right;
+                }
+            }
+            //System.out.println("left = " + leftStack.peek().val + ", right = " + rightStack.peek().val);
+        }
+        return false;
+    }
+}
