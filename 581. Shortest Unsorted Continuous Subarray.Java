@@ -44,6 +44,36 @@ class Solution {
 }
 
 
+// method 2: array
+// time complexity: O(nlogn), space complexity: O(n)
+class Solution {
+    public int findUnsortedSubarray(int[] nums) {
+        if(nums == null || nums.length <= 1) {
+            return 0;
+        }
+        int[] sorted = new int[nums.length];
+        for(int i = 0; i < nums.length; i++) {
+            sorted[i] = nums[i];
+        }
+        Arrays.sort(sorted);
+        int left = 0;
+        for(left = 0; left < nums.length; left++) {
+            if(nums[left] != sorted[left]) {
+                break;
+            }
+        }
+        int right = nums.length - 1;
+        for(right = nums.length - 1; right >= 0; right--) {
+            if(nums[right] != sorted[right]) {
+                break;
+            }
+        }
+        return right - left + 1 >= 0 ? right - left + 1 : 0;
+    }
+}
+
+
+
 
 
 
