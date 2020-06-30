@@ -1,11 +1,9 @@
 
 /*
 A linked list is given such that each node contains an additional random pointer which could point to any node in the list or null.
-
 Return a deep copy of the list.
 
 Example 1:
-
 Input:
 {"$id":"1","next":{"$id":"2","next":null,"random":{"$ref":"2"},"val":2},"random":{"$ref":"2"},"val":1}
 
@@ -85,5 +83,47 @@ class Solution {
 }
 
 
-
+// method 2: two round
+// time complexity: O(n), space complexity: O(1)
+class Solution {
+    public Node copyRandomList(Node head) {
+        if(head == null) {
+            return head;
+        }
+        Node curr = head;
+        // copy next node
+        while(curr != null) {
+            Node newNode = new Node(curr.val);
+            Node nextNode = curr.next;
+            curr.next = newNode;
+            newNode.next = nextNode;
+            curr = nextNode;
+        }
+        curr = head;
+        // copy random node
+        while(curr != null) {
+            if(curr.random != null) {
+                curr.next.random = curr.random.next;
+            }
+            curr = curr.next.next;
+        }
+        // split two linked list
+        // a -> a' -> b -> b' -> c -> c'
+        Node newHead = head.next;
+        Node curr1 = head;
+        Node curr2 = head.next;
+        while(curr1 != null) {
+            Node next1 = curr2.next;
+            Node next2 = null;
+            if(next1 != null) {
+                next2 = next1.next;
+            }
+            curr1.next = next1;
+            curr2.next = next2;
+            curr1 = next1;
+            curr2 = next2;
+        }
+        return newHead;
+    }
+}
 
