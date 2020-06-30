@@ -6,8 +6,8 @@ Example 1:
 
 Input: [3,2,1,5,6,4] and k = 2
 Output: 5
-Example 2:
 
+Example 2:
 Input: [3,2,3,1,2,4,5,5,6] and k = 4
 Output: 4
 Note: 
@@ -50,7 +50,7 @@ class Solution {
 }
 
 
-// method 3: quick select
+// method 3: quick select(ascending)
 // time complexity: O(n), space complexity: O(1)
 class Solution {
   public int findKthLargest(int[] nums, int k) {
@@ -105,6 +105,55 @@ class Solution {
         array[j] = temp;
     }
 }
+
+
+// method 4: quick select(descending)
+// time complexity: O(n), space complexity: O(1)
+class Solution {
+    public int findKthLargest(int[] nums, int k) {
+        if(nums == null || nums.length == 0) {
+            return -1;
+        }
+        int left = 0, right = nums.length - 1;
+        while(left < right) {
+            int pivotIndex = partition(nums, left, right);
+            //System.out.println(Arrays.toString(nums));
+            if(pivotIndex == k - 1) {
+                return nums[pivotIndex];
+            }
+            else if(pivotIndex < k - 1) {
+                left = pivotIndex + 1;
+            }
+            else {
+                right = pivotIndex - 1;
+            }
+        }
+        return nums[left];
+    }
+    public int partition(int[] nums, int left, int right) {
+        int leftBound = left, rightBound = right - 1;
+        int target = nums[right];
+        while(leftBound <= rightBound) {
+            if(nums[leftBound] > target) {
+                leftBound++;
+            }
+            else if(nums[rightBound] <= target) {
+                rightBound--;
+            }
+            else {
+                swap(nums, leftBound++, rightBound--);
+            }
+        }
+        swap(nums, leftBound, right);
+        return leftBound;
+    }
+    public void swap(int[] nums, int i, int j) {
+        int temp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = temp;
+    }
+}
+
 
 
 
