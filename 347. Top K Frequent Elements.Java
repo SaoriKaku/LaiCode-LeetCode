@@ -107,3 +107,48 @@ class Solution {
 }
 
 
+// method 4: bucket Sort
+// time complexity: O(n), space complexity: O(n)
+class Solution {
+    public int[] topKFrequent(int[] nums, int k) {
+        if(nums == null || nums.length == 0 || k <= 0) {
+            return new int[0];
+        }
+        // key: nums, value: count
+        Map<Integer, Integer> map = new HashMap<>();
+        int maxCount = 0;
+        for(int num: nums) {
+            map.put(num, map.getOrDefault(num, 0) + 1);
+            maxCount = Math.max(maxCount, map.get(num));
+        }
+        // index: count, value: list of num
+        List<Integer>[] counts = new List[maxCount + 1];
+        for(int key: map.keySet()) {
+            int index = map.get(key);
+            if(counts[index] == null) {
+                counts[index] = new ArrayList<>();
+            }
+            counts[index].add(key);
+        }
+        List<Integer> result = new ArrayList<>();
+        for(int i = maxCount; i >= 0; i--) {
+            if(counts[i] != null) {
+                for(int j = 0; j < counts[i].size(); j++) {
+                    result.add(counts[i].get(j));
+                }
+            }
+            if(result.size() == k) {
+                break;
+            }
+        }
+        int[] solu = new int[result.size()];
+        for(int i = 0; i < result.size(); i++) {
+            solu[i] = result.get(i);
+        }
+        return solu;
+    }
+}
+
+
+
+
